@@ -1,4 +1,7 @@
-Squares = new Meteor.Collection('bricks');
+Squares = new Meteor.Collection('squares');
+
+var WIDTH = 16;
+var HEIGHT = 9;
 
 if (Meteor.isClient) {
   Template.hello.greeting = function () {
@@ -13,21 +16,26 @@ if (Meteor.isClient) {
     }
   });
 
-  Template.wall.bricks = function() {
-    return Bricks.find();
+  Template.wall.rows = function() {
+    var rows = [];
+
+    for (var i = 0; i < HEIGHT; i++) {
+      rows.push({
+        squares: Squares.find({ y: i })
+      });
+    };
+
+    return rows;
   };
 
 }
 
-var WIDTH = 40;
-var HEIGHT = 20;
-
 if (Meteor.isServer) {
-  var insertAllBricks = function() {
-    if (Bricks.find().count() === 0) {
+  var insertAllSquares = function() {
+    if (Squares.find().count() === 0) {
       for (var i = 0; i < WIDTH; i++) {
         for (var j = 0; j < HEIGHT; j++) {
-          Bricks.insert({
+          Squares.insert({
             x: i,
             y: j,
             color: Random.hexString(6)
@@ -40,6 +48,6 @@ if (Meteor.isServer) {
   Meteor.startup(function () {
     // code to run on server at startup
 
-    insertAllBricks();
+    insertAllSquares();
   });
 }
